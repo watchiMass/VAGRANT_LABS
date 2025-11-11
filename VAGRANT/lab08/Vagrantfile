@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+machines = [
+  { :hostname => "lb", :ip => "10.0.0.10", :shell => "https://raw.githubusercontent.com/PacktPublishing/Hands-On-DevOps-with-Vagrant/master/Chapter07/lb.sh" },
+  { :hostname => "web1", :ip => "10.0.0.11", :shell => "https://raw.githubusercontent.com/PacktPublishing/Hands-On-DevOps-with-Vagrant/master/Chapter07/web.sh" },
+  { :hostname => "web2", :ip => "10.0.0.12", :shell => "https://raw.githubusercontent.com/PacktPublishing/Hands-On-DevOps-with-Vagrant/master/Chapter07/web.sh"}
+
+]
+
+# Variables locales
+BOX = "ubuntu/xenial64"
+BOX_VERSION = "20211001.0.5"
+CPU = 1
+RAM = 1024
+
+
+Vagrant.configure("2") do |config|
+  machines.each do |machine|
+    config.vm.define machine[:hostname] do |node|
+      node.vm.box = BOX
+      node.vm.box_version = BOX_VERSION
+      node.vm.hostname = machine[:hostname]
+      node.vm.network "private_network", ip: machine[:ip]
+      node.vm.provision :shell do |shell|
+        shell.path = machine[:shell]
+      end
+      
+      node.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.memory = RAM
+        vb.cpus = CPU
+      end
+  
+    end
+
+  end
+end

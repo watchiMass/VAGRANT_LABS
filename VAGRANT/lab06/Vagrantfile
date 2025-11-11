@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+machines = [
+  { :hostname => "VM1", :ip => "10.0.0.10" },
+  { :hostname => "VM2", :ip => "10.0.0.11" },
+  { :hostname => "VM3", :ip => "10.0.0.12" }
+]
+
+# Variables locales
+BOX = "ubuntu/xenial64"
+BOX_VERSION = "20211001.0.5"
+CPU = 1
+RAM = 1024
+
+Vagrant.configure("2") do |config|
+  machines.each do |machine|
+    config.vm.define machine[:hostname] do |node|
+      node.vm.box = BOX
+      node.vm.box_version = BOX_VERSION
+      node.vm.hostname = machine[:hostname]
+      node.vm.network "private_network", ip: machine[:ip]
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.memory = RAM
+        vb.cpus = CPU
+      end
+
+      node.hostsupdater.aliases = [machine[:hostname]]
+    end
+  end
+end

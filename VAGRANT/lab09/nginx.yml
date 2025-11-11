@@ -1,0 +1,20 @@
+
+- name: install and start Nginx
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: update APT package index
+      apt: 
+        update_cache: yes
+
+    - name: Install Nginx
+      apt: 
+        name: nginx 
+        state: latest
+
+    - name: Ensure Nginx is started and enabled on boot
+      service: 
+        name: nginx 
+        state: started
+        enabled: yes
